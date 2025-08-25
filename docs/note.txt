@@ -1,0 +1,56 @@
+automate data cleaning
+    -> column names
+    -> missing values -> no missing values present?
+    -> what other inconsistancies?
+    -> what other potential errors?
+
+automate modelling through llms
+    -> default schema keep it flat?
+    -> the schema for db should come from llms?
+    -> need to validate the schema?
+
+answer questions based on data
+    -> use postgres better sql support
+    -> validate the query
+    -> potential long context from result of query from db?
+    -> history?
+    -> pass current datetime
+    -> think longer?
+
+how much should be deterministic vs how much should be llm
+
+___
+
+automatically identify and correct inconsistencies in dataset
+
+handle missing values and potential errors
+
+rename columns to business friendly names
+
+simple interface to execute analysis
+
+easy, medium, hard questions
+
+___
+
+tracing
+
+tests
+
+docs
+
+deployment
+
+____
+
+Simplest Plan
+
+rename the columns
+
+join the files
+
+keep flat schema
+
+answer questions
+
+___
