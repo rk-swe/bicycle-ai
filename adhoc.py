@@ -1,3 +1,3 @@
-from services import utils
+from app.services import utils
 
 utils.test_to_snake_case()

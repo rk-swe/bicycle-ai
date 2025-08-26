@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Self
 
-from services import utils
+from app.services import utils
 
 
 @dataclass
