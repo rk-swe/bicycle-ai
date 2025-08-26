@@ -16,8 +16,8 @@ class InputFile:
 
     @property
     def file_path(self: Self) -> str:
-        return f"{self.file_name}.{self.file_ext}"
+        return f"{self.folder_name}/{self.file_name}.{self.file_ext}"
 
     @property
     def sql_table_name(self: Self) -> str:
-        return f"{utils.to_snake_case(self.file_name)}.{self.file_ext}"
+        return f"{utils.to_snake_case(self.file_name)}"

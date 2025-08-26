@@ -5,9 +5,13 @@ from app.services import column_rename_service
 
 
 def clean_data(input_file: InputFile, df: pd.DataFrame) -> pd.DataFrame:
+    print("clean_data")
+    print(df)
+
     column_renamer = column_rename_service.get_column_renamer(input_file, df)
     df = df.rename(columns=column_renamer)
 
     # TODO: handle missing values
 
+    print(df)
     return df

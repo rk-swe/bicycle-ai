@@ -3,7 +3,6 @@ ___
 Plan
 
 rename columns
-    need to validate, retry = 1
 
 handle missing values
 
@@ -16,5 +15,10 @@ no missing values present?
 what other inconsistancies?
 
 what other potential errors?
+
+___
+Later
+
+retry = 1 on error
 
 ___

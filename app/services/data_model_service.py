@@ -5,6 +5,8 @@ from app.schemas.file_schemas import InputFile
 
 
 def create_model_and_store_data(input_file: InputFile, df: pd.DataFrame) -> None:
+    print("create_model_and_store_data")
+
     # TODO: make schema, validate schema, create schema, insert data
 
     with database.engine.connect() as conn:
@@ -15,3 +17,5 @@ def create_model_and_store_data(input_file: InputFile, df: pd.DataFrame) -> None
             index=False,
             chunksize=100,
         )
+
+    print("success")

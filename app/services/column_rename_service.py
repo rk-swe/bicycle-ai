@@ -1,27 +1,45 @@
 import pandas as pd
 from openai import OpenAI
-from services import utils
+from pydantic import BaseModel
 
 from app.schemas.file_schemas import InputFile
+from app.services import utils
 
 client = OpenAI()
 
 
+class ColumnRenameField(BaseModel):
+    old_name: str
+    new_name: str
+
+
+class ColumnRenameList(BaseModel):
+    columns: list[ColumnRenameField]
+
+
 # NOTE: retry once if error
 def get_column_renamer(input_file: InputFile, df: pd.DataFrame) -> dict[str, str]:
+    print("get_column_renamer")
+
     user_prompt = f"""
         You are helping standardize column names for a table.
 
-        Task:
-        - Return a JSON object mapping each original column name to a better one.
-        - Use snake_case.
-        - Keep names concise but descriptive.
-        - Do NOT add or remove columns, only rename.
+        Your task:
+        - Is to return a mapping from original column name to its new name.
+        - Every original column must have a corresponding renamed column (no omissions).
+        - Do not invent or remove columns.
+        - Apply these rules when renaming:
+            1. Correct spelling mistakes.
+            2. Give full forms for short hand names
+            3. Use snake_case format (all lowercase, underscores between words).
+            4. Keep names concise but descriptive.
+            5. Dont change name if it already makes sense
 
-        File Name: {input_file.file_name_with_ext}
-        Suggested SQL table: {input_file.sql_table_name}
+        Context:
+        - File name: {input_file.file_name_with_ext}
+        - Suggested SQL table: {input_file.sql_table_name}
 
-        Here are the dataframe columns and dtypes:
+        Dataframe columns with dtypes:
         {df.dtypes.to_dict()}
     """
 
@@ -33,9 +51,9 @@ def get_column_renamer(input_file: InputFile, df: pd.DataFrame) -> dict[str, str
                 "content": user_prompt,
             }
         ],
-        text_format=dict[str, str],
+        text_format=ColumnRenameList,
     )
-    column_renamer = response.output_parsed
+    column_renamer = {x.old_name: x.new_name for x in response.output_parsed.columns}
 
     # validate
     missing = set(df.columns) - set(column_renamer.keys())
@@ -48,4 +66,5 @@ def get_column_renamer(input_file: InputFile, df: pd.DataFrame) -> dict[str, str
         col: utils.to_snake_case(new) for col, new in column_renamer.items()
     }
 
+    print(column_renamer)
     return column_renamer
