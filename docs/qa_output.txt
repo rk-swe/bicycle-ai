@@ -1,0 +1,41 @@
+Question: Which airline has the most flights listed?
+
+Answer: The airline with the most flights listed is KLM Royal Dutch Airlines with 593 flights.
+
+--------------------------------------------------
+
+Question: What are the top three most frequented destinations?
+
+Answer: The top three most frequented destinations are on the dates 2023-04-23 09:19:58, 2023-09-09 07:44:03, and 2023-05-09 10:18:25.
+
+--------------------------------------------------
+
+Question: Number of bookings for American Airlines yesterday.
+
+Answer: I'm sorry, but there was an error in retrieving the data. The SQL statement used to fetch the data is invalid. The error is related to a mismatch in data types. We will correct this and try again.
+
+--------------------------------------------------
+
+Question: Average flight delay per airline.
+
+Answer: The average flight delay per airline is as follows: Qantas has an average delay of 6.20 hours, Spirit Airlines has an average delay of 6.45 hours, SkyWest Airlines has an average delay of 6.59 hours, Lufthansa has an average delay of 6.37 hours, KLM Royal Dutch Airlines has an average delay of 6.42 hours, American Airline has an average delay of 6.37 hours, Singapore Airlines has an average delay of 6.52 hours, Southwest Airlines has an average delay of 6.44 hours, Hawaiian Airlines has an average delay of 6.64 hours, Allegiant Air has an average delay of 6.49 hours, JetBlue Airways has an average delay of 6.66 hours, Alaska Airlines has an average delay of 6.50 hours, United Airlines has an average delay of 6.32 hours, Emirates has an average delay of 6.73 hours, Air France has an average delay of 6.15 hours, Delta Air Lines has an average delay of 6.53 hours, Air Canada has an average delay of 6.58 hours, Frontier Airlines has an average delay of 6.43 hours, and British Airways has an average delay of 6.13 hours.
+
+--------------------------------------------------
+
+Question: Month with the highest number of bookings.
+
+Answer: I'm sorry, but there seems to be an error in the SQL statement. The function used to extract the month from the departure date is not recognized. You might need to adjust the function or add explicit type casts.
+
+--------------------------------------------------
+
+Question: Patterns in booking cancellations, focusing on specific days or airlines with high cancellation rates.
+
+Answer: The airline with the highest number of booking cancellations is British Airways with 196 cancellations. This is closely followed by KLM Royal Dutch Airlines with 194 cancellations, and Alaska Airlines with 193 cancellations. The airlines with the least number of cancellations from the data provided are Lufthansa, Frontier Airlines, and SkyWest Airlines with 164, 161, and 160 cancellations respectively.
+
+--------------------------------------------------
+
+Question: Analyze seat occupancy to find the most and least popular flights.
+
+Answer: The most popular flights are those with flight numbers 9294, 9353, 7444, and 8749, each having 7 seats occupied. The least popular flights are those with only 1 seat occupied, which include a large number of flights such as 6939, 6030, 3093, 7938, 7540, 3997, 9179, 1782, 4066, 2352, 5606, 7181, 4884, 4696, 7939, 8217, 5750, 8684, 5600, 5692, 7189, 5447, 5472, 1984, 4271, 6534, 2168, 7290, 1118, 1025, 6096, 9236, 5732, 2891, 8060, 3301, 4925, 9113, 8113, 9846, 4479, 5794, 1992, 8604, 5800, 1078, 3253, 6500, 7874, 9598, 1403, 7070, 6013, 9312, 9770, 5296, 3921, 9508, 7052, 6825, 3432, 2920, 4811, 6122, 7042, 4737, 8987
+
+--------------------------------------------------

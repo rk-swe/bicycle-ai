@@ -44,7 +44,7 @@ def get_column_renamer(input_file: InputFile, df: pd.DataFrame) -> dict[str, str
     """
 
     response = client.responses.parse(
-        model="gpt-5",
+        model="gpt-5-mini",
         input=[
             {
                 "role": "user",
