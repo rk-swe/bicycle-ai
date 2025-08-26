@@ -1,5 +1,6 @@
 import pandas as pd
 
+import database
 from schemas.file_schemas import InputFile
 from services import column_rename_service
 
@@ -18,17 +19,20 @@ def clean_and_store_data():
 
         # TODO: handle missing values
 
-        # make schema
+        # TODO: make schema, validate schema, create schema, insert data
 
-        # validate schema
-
-        # create schema
-
-        # insert data
+        with database.engine.connect() as conn:
+            df.to_sql(
+                input_file.sql_table_name,
+                con=conn,
+                if_exists="replace",
+                index=False,
+                chunksize=100,
+            )
 
 
 def main():
-    pass
+    clean_and_store_data()
 
 
 if __name__ == "__main__":

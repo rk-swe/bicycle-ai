@@ -43,7 +43,7 @@ wheels = [
 ]
 
 [[package]]
-name = "bicycle"
+name = "bicycle_ai"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
