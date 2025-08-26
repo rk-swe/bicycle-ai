@@ -1,0 +1,44 @@
+automate data cleaning
+
+automate modelling through llms
+
+answer questions based on data
+
+how much should be deterministic vs how much should be llm?
+
+___
+
+automatically identify and correct inconsistencies in dataset
+
+handle missing values and potential errors
+
+rename columns to business friendly names
+
+simple interface to execute analysis
+
+easy, medium, hard questions
+
+___
+
+tracing
+
+tests
+
+docs
+
+deployment
+
+____
+
+Easy:
+    Which airline has the most flights listed?
+    What are the top three most frequented destinations?
+    Number of bookings for American Airlines yesterday.
+
+Medium:
+    Average flight delay per airline.
+    Month with the highest number of bookings.
+
+Hard:
+    Patterns in booking cancellations, focusing on specific days or airlines with high cancellation rates.
+    Analyze seat occupancy to find the most and least popular flights.

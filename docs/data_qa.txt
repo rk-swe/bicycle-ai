@@ -1,0 +1,27 @@
+___
+
+Plan
+
+use postgres better sql support
+
+validate the query -> retry = 1
+
+pass current datetime
+
+___
+
+Thoughts
+
+potential long context from result of query from db?
+
+history, memory
+
+think longer
+
+use multiple queries to get answer?
+
+breaking querys into subqueries?
+
+planning and executing?
+
+___

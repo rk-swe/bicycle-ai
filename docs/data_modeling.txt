@@ -1,0 +1,25 @@
+___
+
+Plan
+
+the schema for db should come from llm
+
+default schema keep it each file seperate
+
+need to validate the schema -> retry = 1
+
+___
+
+Thoughts
+
+join the files into one table?
+
+converting the schema to something that is easier to query?
+
+creating whole database schemas instead of one by one
+
+creating foreign keys between tables?
+
+indexes? -> probably not less data
+
+___

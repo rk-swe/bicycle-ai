@@ -1,0 +1,20 @@
+___
+
+Plan
+
+rename columns
+    need to validate, retry = 1
+
+handle missing values
+
+___
+
+Thoughts
+
+no missing values present?
+
+what other inconsistancies?
+
+what other potential errors?
+
+___

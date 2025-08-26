@@ -1,0 +1,7 @@
+Plan
+
+rename the columns
+
+treat each file as seperate table
+
+answer questions
