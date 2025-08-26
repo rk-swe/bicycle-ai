@@ -1,3 +1,8 @@
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 from app.services import data_qa_service, data_transform_service
 
 
