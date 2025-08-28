@@ -1,0 +1,129 @@
+# gpt-4.1-mini
+
+Question: Which airline has the most flights listed?
+
+SQL: SELECT airline_id_to_name.airline_name, COUNT(*) AS flight_count
+FROM flight_bookings
+JOIN airline_id_to_name ON flight_bookings.airline_id = airline_id_to_name.airline_id
+GROUP BY airline_id_to_name.airline_name
+ORDER BY flight_count DESC
+LIMIT 1;
+
+Answer: The airline with the most flights listed is KLM Royal Dutch Airlines, with a total of 593 flights.
+
+--------------------------------------------------
+
+Question: What are the top three most frequented destinations?
+
+SQL: SELECT flight_bookings.arrival_date, flight_bookings.arrival_time, flight_bookings.layover_locations
+FROM flight_bookings
+ORDER BY flight_bookings.layover_count DESC
+LIMIT 3;
+
+Answer: The top three most frequented destinations based on the flight bookings data are locations with the codes LOCBXP, LOCWUW, and LOCXAY.
+
+--------------------------------------------------
+
+Question: Number of bookings for American Airlines yesterday.
+
+SQL: SELECT COUNT(*) 
+FROM flight_bookings fb
+JOIN airline_id_to_name ain ON fb.airline_id = ain.airline_id
+WHERE ain.airline_name = 'American Airlines' 
+  AND fb.departure_date = '2025-08-27'
+
+Answer: There were no bookings for American Airlines on August 27, 2025 (yesterday).
+
+--------------------------------------------------
+
+Question: Average flight delay per airline.
+
+SQL: SELECT airline_id_to_name.airline_name, AVG(flight_bookings.duration_hours) AS average_duration FROM flight_bookings JOIN airline_id_to_name ON flight_bookings.airline_id = airline_id_to_name.airline_id GROUP BY airline_id_to_name.airline_name ORDER BY average_duration DESC;
+
+Answer: The average flight duration per airline, based on the latest data, is as follows (in hours):
+
+- Emirates: 6.73
+- JetBlue Airways: 6.66
+- Hawaiian Airlines: 6.64
+- SkyWest Airlines: 6.59
+- Air Canada: 6.58
+- Delta Air Lines: 6.53
+- Singapore Airlines: 6.52
+- Alaska Airlines: 6.50
+- Allegiant Air: 6.49
+- Spirit Airlines: 6.45
+- Southwest Airlines: 6.44
+- Frontier Airlines: 6.43
+- KLM Royal Dutch Airlines: 6.42
+- American Airline: 6.37
+- Lufthansa: 6.37
+- United Airlines: 6.32
+- Qantas: 6.20
+- Air France: 6.15
+- British Airways: 6.13
+
+This data reflects the average flight duration rather than delay times. If you need average flight delays specifically, please clarify so I can provide the relevant information.
+
+--------------------------------------------------
+
+Question: Month with the highest number of bookings.
+
+SQL: SELECT 
+    SUBSTRING(flight_bookings.departure_date FROM 1 FOR 7) AS year_month, 
+    COUNT(*) AS booking_count
+FROM flight_bookings
+GROUP BY year_month
+ORDER BY booking_count DESC
+LIMIT 1;
+
+Answer: The month with the highest number of bookings is October 2023, with a total of 906 bookings.
+
+--------------------------------------------------
+
+Question: Patterns in booking cancellations, focusing on specific days or airlines with high cancellation rates.
+
+SQL: SELECT fb.departure_date, a.airline_name, COUNT(*) AS total_bookings, 
+       SUM(CASE WHEN fb.status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled_bookings,
+       ROUND(100.0 * SUM(CASE WHEN fb.status = 'cancelled' THEN 1 ELSE 0 END) / COUNT(*), 2) AS cancellation_rate_percentage
+FROM flight_bookings fb
+JOIN airline_id_to_name a ON fb.airline_id = a.airline_id
+GROUP BY fb.departure_date, a.airline_name
+ORDER BY cancellation_rate_percentage DESC, total_bookings DESC
+LIMIT 10;
+
+Answer: Based on the query results analyzing booking cancellations by specific days and airlines, the top 10 records all correspond to bookings on January 1, 2023, across various airlines including Spirit Airlines, Qantas, Alaska Airlines, American Airlines, United Airlines, Singapore Airlines, British Airways, and Emirates. Notably, none of these bookings were cancelled, resulting in a 0% cancellation rate for each airline on that day.
+
+This indicates that, at least for the sampled data on January 1, 2023, there were no significant patterns of high cancellation rates tied to specific airlines or that particular day. To identify meaningful trends in booking cancellations, a broader dataset covering more dates and higher booking volumes would be necessary, as the current data shows very low booking counts (only one booking per airline per timestamp) and no cancellations.
+
+--------------------------------------------------
+
+Question: Analyze seat occupancy to find the most and least popular flights.
+
+SQL: WITH seat_counts AS (
+  SELECT 
+    airline_id, 
+    flight_number, 
+    COUNT(seat_number) AS occupied_seats
+  FROM flight_bookings
+  GROUP BY airline_id, flight_number
+)
+SELECT 
+  airline_id_to_name.airline_name, 
+  seat_counts.flight_number, 
+  seat_counts.occupied_seats
+FROM seat_counts
+JOIN airline_id_to_name ON seat_counts.airline_id = airline_id_to_name.airline_id
+ORDER BY seat_counts.occupied_seats DESC
+LIMIT 5;
+
+Answer: Based on the analysis of seat occupancy across flights, the most popular flights—those with the highest number of occupied seats—are tied with 3 occupied seats each. The top 5 flights with this occupancy are:
+
+- Air Canada flight 2688
+- Air Canada flight 2573
+- Allegiant Air flight 8670
+- SkyWest Airlines flight 7755
+- KLM Royal Dutch Airlines flight 5310
+
+Since all these flights have the same number of occupied seats (3), they represent the highest occupancy in the dataset. There is no data provided here about flights with fewer occupied seats, so the least popular flights cannot be identified from this result.
+
+--------------------------------------------------

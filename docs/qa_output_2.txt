@@ -1,0 +1,100 @@
+# gpt-4o-mini
+
+Question: Which airline has the most flights listed?
+
+SQL: SELECT airline_id, COUNT(flight_number) AS flight_count FROM flight_bookings GROUP BY airline_id ORDER BY flight_count DESC LIMIT 1;
+
+Answer: The airline with the most flights listed is airline ID 16, which has a total of 593 flights.
+
+--------------------------------------------------
+
+Question: What are the top three most frequented destinations?
+
+SQL: SELECT flight_bookings.arrival_date, COUNT(*) AS frequency 
+            FROM flight_bookings 
+            WHERE departure_date < '2025-08-28' 
+            GROUP BY flight_bookings.arrival_date 
+            ORDER BY frequency DESC 
+            LIMIT 3;
+
+Answer: The top three most frequented destinations based on flight bookings are:
+
+1. **April 23, 2023** - 2 bookings
+2. **September 9, 2023** - 2 bookings
+3. **May 9, 2023** - 1 booking
+
+These destinations have seen the highest frequency of arrivals prior to the current date.
+
+--------------------------------------------------
+
+Question: Number of bookings for American Airlines yesterday.
+
+SQL: SELECT COUNT(*) AS booking_count 
+FROM flight_bookings 
+WHERE airline_id = (SELECT airline_id FROM airline_id_to_name WHERE airline_name = 'American Airlines') 
+AND departure_date = '2025-08-27';
+
+Answer: There were no bookings for American Airlines yesterday.
+
+--------------------------------------------------
+
+Question: Average flight delay per airline.
+
+SQL: SELECT a.airline_name, AVG(EXTRACT(EPOCH FROM (f.arrival_time::time - f.departure_time::time)) / 60) AS average_delay
+FROM flight_bookings f
+JOIN airline_id_to_name a ON f.airline_id = a.airline_id
+WHERE f.status = 'Delayed'
+GROUP BY a.airline_name
+ORDER BY average_delay DESC;
+
+Answer: It appears that there are currently no records of delayed flights in the database, which means we cannot provide an average flight delay per airline at this time.
+
+--------------------------------------------------
+
+Question: Month with the highest number of bookings.
+
+SQL: SELECT EXTRACT(MONTH FROM departure_date::DATE) AS booking_month, COUNT(*) AS total_bookings
+FROM flight_bookings
+WHERE departure_date >= '2025-08-01' AND departure_date < '2025-09-01'
+GROUP BY booking_month
+ORDER BY total_bookings DESC
+LIMIT 1;
+
+Answer: It appears that there were no bookings recorded for the month of August 2025, as indicated by the SQL query results returning an empty set. Therefore, we cannot identify a month with the highest number of bookings for that period.
+
+--------------------------------------------------
+
+Question: Patterns in booking cancellations, focusing on specific days or airlines with high cancellation rates.
+
+SQL: SELECT fb.departure_date, atn.airline_name, COUNT(*) AS cancellation_count
+FROM flight_bookings fb
+JOIN airline_id_to_name atn ON fb.airline_id = atn.airline_id
+WHERE fb.status = 'Cancelled'
+GROUP BY fb.departure_date, atn.airline_name
+ORDER BY cancellation_count DESC
+LIMIT 10;
+
+Answer: The analysis of booking cancellations reveals specific patterns among various airlines and dates. The data indicates that the following airlines experienced cancellations on notable dates:
+
+1. **British Airways** - 1 cancellation on **October 30, 2023**
+2. **Singapore Airlines** - 1 cancellation on **October 15, 2023**
+3. **Air Canada** - 1 cancellation on **February 28, 2023**
+4. **Alaska Airlines** - 1 cancellation on **February 9, 2023**
+5. **Spirit Airlines** - 1 cancellation on **April 3, 2023**
+6. **Hawaiian Airlines** - 1 cancellation on **May 22, 2023**
+7. **United Airlines** - 1 cancellation on **March 4, 2023**
+8. **Emirates** - 1 cancellation on **August 20, 2023**
+9. **JetBlue Airways** - 1 cancellation on **October 12, 2023**
+10. **Hawaiian Airlines** - 1 cancellation on **December 19, 2023**
+
+Each of these cancellations is recorded as a single instance, suggesting that while cancellations do occur, they may not be widespread on the specific dates listed. Further analysis could be beneficial to identify trends over a longer period or to compare cancellation rates across different months or seasons.
+
+--------------------------------------------------
+
+Question: Analyze seat occupancy to find the most and least popular flights.
+
+SQL: SELECT flight_number, COUNT(seat_number) AS occupied_seats FROM flight_bookings WHERE status = 'confirmed' GROUP BY flight_number ORDER BY occupied_seats DESC
+
+Answer: It appears that there are currently no confirmed bookings in the flight bookings database, as indicated by the empty result set from the SQL query. Consequently, we cannot analyze seat occupancy or determine the most and least popular flights at this time. If you have access to more recent data or additional booking records, please provide them for further analysis.
+
+--------------------------------------------------

@@ -8,7 +8,7 @@ from app import database
 
 sql_db = SQLDatabase(database.engine)
 
-llm = OpenAI(model="gpt-4o-mini")
+llm = OpenAI(model="o3")
 
 query_engine = NLSQLTableQueryEngine(sql_database=sql_db, llm=llm)
 
@@ -20,7 +20,12 @@ def get_answer(question: str) -> str:
     
     Question: {question}
     """
-    return query_engine.query(contextual_question)
+    response= query_engine.query(contextual_question)
+    
+    sql = response.metadata.get("sql_query")
+    print(f"SQL: {sql}", end="\n\n")
+
+    return response.response
 
 
 def test_qa():

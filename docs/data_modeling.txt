@@ -24,4 +24,8 @@ indexes? -> probably not less data
 
 find and coerce data type for each column
 
+handle categorical value columns
+
+handle enums
+
 ___
