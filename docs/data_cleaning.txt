@@ -6,15 +6,14 @@ rename columns
 
 handle missing values
 
+Improvements/Ideas
 -> handle column wise data for all columns based on column type
--> can give row wise data
--> can give column wise data
 -> can fill each cell one by one 
--> or give 100 rows each time till all rows are done
+-> or give 100 rows each time till all rows are dones
 
 ___
 
-Thoughts
+Questions
 
 no missing values present?
 

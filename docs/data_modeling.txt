@@ -12,15 +12,15 @@ ___
 
 Thoughts
 
-join the files into one table?
+join the files into one table
 
-converting the schema to something that is easier to query?
+converting the schema to something that is easier to query
 
 creating whole database schemas instead of one by one
 
-creating foreign keys between tables?
+creating foreign keys between tables
 
-indexes? -> probably not less data
+indexes -> probably not less data
 
 find and coerce data type for each column
 

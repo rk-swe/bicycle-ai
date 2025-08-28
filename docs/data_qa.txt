@@ -12,16 +12,16 @@ ___
 
 Thoughts
 
-potential long context from result of query from db?
+potential long context from result of query from db
 
 history, memory
 
 think longer
 
-use multiple queries to get answer?
+use multiple queries to get answer
 
-breaking querys into subqueries?
+breaking querys into subqueries
 
-planning and executing?
+planning and executing
 
 ___
