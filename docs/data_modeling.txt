@@ -22,4 +22,6 @@ creating foreign keys between tables?
 
 indexes? -> probably not less data
 
+find and coerce data type for each column
+
 ___

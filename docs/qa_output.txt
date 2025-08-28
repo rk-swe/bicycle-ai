@@ -12,7 +12,7 @@ Answer: The top three most frequented destinations are on the dates 2023-04-23 0
 
 Question: Number of bookings for American Airlines yesterday.
 
-Answer: I'm sorry, but there was an error in retrieving the data. The SQL statement used to fetch the data is invalid. The error is related to a mismatch in data types. We will correct this and try again.
+Answer: There were no bookings for American Airlines yesterday.
 
 --------------------------------------------------
 
@@ -24,7 +24,7 @@ Answer: The average flight delay per airline is as follows: Qantas has an averag
 
 Question: Month with the highest number of bookings.
 
-Answer: I'm sorry, but there seems to be an error in the SQL statement. The function used to extract the month from the departure date is not recognized. You might need to adjust the function or add explicit type casts.
+Answer: It appears that there were no bookings recorded for the month of August 2025, as indicated by the SQL query results returning an empty set. Therefore, we cannot identify a month with the highest number of bookings for that period.
 
 --------------------------------------------------
 

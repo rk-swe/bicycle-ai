@@ -1,4 +1,6 @@
-from llama_index.core import ServiceContext, SQLDatabase
+from datetime import datetime
+
+from llama_index.core import SQLDatabase
 from llama_index.core.query_engine import NLSQLTableQueryEngine
 from llama_index.llms.openai import OpenAI
 
@@ -12,7 +14,13 @@ query_engine = NLSQLTableQueryEngine(sql_database=sql_db, llm=llm)
 
 
 def get_answer(question: str) -> str:
-    return query_engine.query(question)
+    contextual_question = f"""
+    Current datetime is {datetime.now().isoformat()}.
+    Use this when interpreting relative time expressions like 'yesterday', 'this month', etc.
+    
+    Question: {question}
+    """
+    return query_engine.query(contextual_question)
 
 
 def test_qa():
@@ -29,13 +37,13 @@ def test_qa():
         "Analyze seat occupancy to find the most and least popular flights.",
     ]
     for question in questions:
-        print(f"Question: {question}")
-        print(f"Answer: {get_answer(question)}")
-        print("-" * 50)
+        print(f"Question: {question}", end="\n\n")
+        print(f"Answer: {get_answer(question)}", end="\n\n")
+        print("-" * 50, end="\n\n")
 
 
 def conversation_loop():
     while True:
         question = input("Question: ")
-        print(f"Answer: {get_answer(question)}")
-        print("-" * 50)
+        print(f"\nAnswer: {get_answer(question)}", end="\n\n")
+        print("-" * 50, end="\n\n")

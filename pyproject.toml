@@ -1,5 +1,5 @@
 [project]
-name = "bicycle_ai"
+name = "bicycle-ai"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -13,3 +13,6 @@ dependencies = [
     "python-dotenv>=1.1.1",
     "sqlalchemy>=2.0.43",
 ]
+
+[dependency-groups]
+dev = ["black>=25.1.0", "isort>=6.0.1", "pytest>=8.4.1"]

@@ -6,6 +6,12 @@ rename columns
 
 handle missing values
 
+-> handle column wise data for all columns based on column type
+-> can give row wise data
+-> can give column wise data
+-> can fill each cell one by one 
+-> or give 100 rows each time till all rows are done
+
 ___
 
 Thoughts
