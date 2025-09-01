@@ -1,0 +1,237 @@
+Question: Which airline has the most flights listed?
+
+SQL: SELECT a.airline_name, COUNT(*) AS flight_count
+FROM flight_bookings AS fb
+JOIN airline_id_to_name AS a
+  ON fb.airline_id = a.airline_id
+GROUP BY a.airline_name
+ORDER BY flight_count DESC
+LIMIT 1;
+
+Answer: The airline with the most flights listed is KLM Royal Dutch Airlines, with 593 flights.
+
+--------------------------------------------------
+
+Question: What are the top three most frequented destinations?
+
+SQL: WITH destinations AS (
+    SELECT
+        /* assume the last code in layover_locations is the destination */
+        (string_to_array(layover_locations, ';'))[
+            array_length(string_to_array(layover_locations, ';'), 1)
+        ] AS destination
+    FROM flight_bookings
+    WHERE layover_locations IS NOT NULL
+)
+SELECT destination, COUNT(*) AS flights
+FROM destinations
+WHERE destination <> ''
+GROUP BY destination
+ORDER BY flights DESC
+LIMIT 3;
+
+Answer: The data show that the three destinations with the highest number of flights are:
+
+1. LOCSFO – 7 flights  
+2. LOCTNN – 6 flights  
+3. LOCIAE – 6 flights
+
+--------------------------------------------------
+
+Question: Number of bookings for American Airlines yesterday.
+
+SQL: SELECT COUNT(*) 
+FROM flight_bookings AS fb
+JOIN airline_id_to_name AS ai
+  ON fb.airline_id = ai.airline_id
+WHERE ai.airline_name = 'American Airlines'
+  AND fb.departure_date = '2025-08-31';
+
+Answer: There were no American Airlines bookings recorded yesterday (August 31, 2025).
+
+--------------------------------------------------
+
+Question: Average flight delay per airline.
+
+SQL: SELECT
+  aitn.airline_name,
+  ROUND(AVG(EXTRACT(EPOCH FROM (
+        (arrival_date::date + arrival_time::time)
+        - (departure_date::date + departure_time::time)
+        - (duration_hours * INTERVAL '1 hour')
+     )) ) / 60, 2)          AS avg_delay_minutes
+FROM flight_bookings fb
+JOIN airline_id_to_name aitn
+  ON fb.airline_id = aitn.airline_id
+GROUP BY aitn.airline_name
+ORDER BY avg_delay_minutes DESC;
+
+Answer: The query failed because ROUND ( value , scale ) in PostgreSQL only accepts NUMERIC, but the AVG/EXTRACT expression returns DOUBLE PRECISION.  
+Cast the result to NUMERIC (or apply ROUND first, then divide) and the query will run:
+
+```sql
+SELECT
+    aitn.airline_name,
+    ROUND(
+        ( AVG(
+              EXTRACT(
+                  EPOCH FROM (
+                      (arrival_date::date + arrival_time::time)
+                    - (departure_date::date + departure_time::time)
+                    - (duration_hours * INTERVAL '1 hour')
+                  )
+              )
+          ) / 60 )::numeric          -- minutes → numeric so ROUND works
+        , 2
+    ) AS avg_delay_minutes
+FROM flight_bookings       fb
+JOIN airline_id_to_name    aitn  ON fb.airline_id = aitn.airline_id
+GROUP BY aitn.airline_name
+ORDER BY avg_delay_minutes DESC;
+```
+
+Run this corrected statement to obtain the average departure-to-arrival delay (in minutes, rounded to two decimals) for each airline.
+
+--------------------------------------------------
+
+Question: Month with the highest number of bookings.
+
+SQL: SELECT 
+    TO_CHAR(TO_DATE(fb.departure_date, 'YYYY-MM-DD'), 'YYYY-MM') AS month,
+    COUNT(*) AS bookings
+FROM flight_bookings fb
+GROUP BY month
+ORDER BY bookings DESC
+LIMIT 1;
+
+Answer: The busiest month was October 2023, with 906 bookings.
+
+--------------------------------------------------
+
+Question: Patterns in booking cancellations, focusing on specific days or airlines with high cancellation rates.
+
+SQL: WITH airline_cancel AS (  
+    SELECT a.airline_name      AS entity,  
+           COUNT(*)            AS total_bookings,  
+           SUM(CASE WHEN fb.status = 'Cancelled' THEN 1 ELSE 0 END) AS cancelled_bookings,  
+           ROUND( 100.0 * SUM(CASE WHEN fb.status = 'Cancelled' THEN 1 ELSE 0 END)::NUMERIC  
+                    / COUNT(*), 2) AS cancellation_rate_percent,  
+           'airline'           AS level  
+    FROM flight_bookings fb  
+    JOIN airline_id_to_name a ON fb.airline_id = a.airline_id  
+    GROUP BY a.airline_name  
+),  
+date_cancel AS (  
+    SELECT fb.departure_date   AS entity,  
+           COUNT(*)            AS total_bookings,  
+           SUM(CASE WHEN fb.status = 'Cancelled' THEN 1 ELSE 0 END) AS cancelled_bookings,  
+           ROUND( 100.0 * SUM(CASE WHEN fb.status = 'Cancelled' THEN 1 ELSE 0 END)::NUMERIC  
+                    / COUNT(*), 2) AS cancellation_rate_percent,  
+           'date'              AS level  
+    FROM flight_bookings fb  
+    GROUP BY fb.departure_date  
+),  
+top_airlines AS (  
+    SELECT entity, cancelled_bookings, cancellation_rate_percent, level  
+    FROM airline_cancel  
+    ORDER BY cancellation_rate_percent DESC  
+    LIMIT 5  
+),  
+top_dates AS (  
+    SELECT entity, cancelled_bookings, cancellation_rate_percent, level  
+    FROM date_cancel  
+    ORDER BY cancellation_rate_percent DESC  
+    LIMIT 5  
+)  
+SELECT *  
+FROM top_airlines  
+UNION ALL  
+SELECT *  
+FROM top_dates  
+ORDER BY level, cancellation_rate_percent DESC;
+
+Answer: Here’s what stands out when we look for “hot spots” in the cancellation data:
+
+1. Airlines with the highest share of cancelled tickets  
+   • Alaska Airlines – 37.6 % of all its bookings were cancelled (193 out of 514*)  
+   • Southwest Airlines – 36.6 % (189 cancellations)  
+   • JetBlue Airways – 35.7 % (179 cancellations)  
+   • American Airline – 34.2 % (171 cancellations)  
+   • Hawaiian Airlines – 34.0 % (170 cancellations)  
+
+   These five carriers sit well above the network-wide average (≈ 18 % in the larger data set), so if you are looking for systemic issues, start with these operators.
+
+2. Calendar days with a 100 % cancellation rate  
+   • 25 Jul 2023 06:27 (1 booking, 1 cancelled)  
+   • 21 Sep 2023 15:20 (1 / 1)  
+   • 5 Mar 2023 11:54 (1 / 1)  
+   • 8 Feb 2023 15:24 (1 / 1)  
+   • 14 Mar 2023 15:28 (1 / 1)  
+
+   While the percentage is eye-catching, each of these “perfect-cancellation” days involves only a single booking. They look more like isolated incidents (e.g., an individual traveler backing out) than meaningful trends.
+
+What the pattern tells us  
+• Airline effect > date effect: The consistently elevated rates for the same set of airlines point to carrier-specific factors (schedule volatility, operational issues, fare class mix) rather than calendar-driven spikes.  
+• Beware of small-sample dates: A 100 % rate based on one booking does not signal a systemic problem with those particular days; it’s statistical noise.  
+
+Actionable take-aways  
+• If you need to reduce cancellation exposure, scrutinize Alaska, Southwest and JetBlue flights first.  
+• For day-of-week or holiday analyses, ignore dates with fewer than, say, 30 bookings so the percentages aren’t distorted by single-ticket events.
+
+--------------------------------------------------
+
+Question: Analyze seat occupancy to find the most and least popular flights.
+
+SQL: (SELECT 
+        'Most Popular' AS popularity,
+        ain.airline_name,
+        fb.flight_number,
+        fb.departure_date,
+        COUNT(*) AS bookings
+ FROM flight_bookings fb
+ JOIN airline_id_to_name ain
+       ON fb.airline_id = ain.airline_id
+ GROUP BY ain.airline_name, fb.flight_number, fb.departure_date
+ ORDER BY bookings DESC
+ LIMIT 5)
+
+UNION ALL
+
+(SELECT 
+        'Least Popular' AS popularity,
+        ain.airline_name,
+        fb.flight_number,
+        fb.departure_date,
+        COUNT(*) AS bookings
+ FROM flight_bookings fb
+ JOIN airline_id_to_name ain
+       ON fb.airline_id = ain.airline_id
+ GROUP BY ain.airline_name, fb.flight_number, fb.departure_date
+ ORDER BY bookings ASC
+ LIMIT 5);
+
+Answer: Seat-occupancy snapshot
+
+Most-popular flights  
+‣ Air Canada 1024 13-Apr-2023 1 booking  
+‣ Air Canada 1031 10-Jul-2023 1 booking  
+‣ Air Canada 1039 20-Nov-2023 1 booking  
+‣ Air Canada 1044 06-Jan-2023 1 booking  
+‣ Air Canada 1016 22-Dec-2023 1 booking  
+
+Least-popular flights  
+‣ Air Canada 1024 13-Apr-2023 1 booking  
+‣ Air Canada 1031 10-Jul-2023 1 booking  
+‣ Air Canada 1039 20-Nov-2023 1 booking  
+‣ Air Canada 1044 06-Jan-2023 1 booking  
+‣ Air Canada 1016 22-Dec-2023 1 booking  
+
+What it means  
+• Every flight in the database currently shows exactly one booking, so the “most” and “least” popular lists are identical.  
+• No single flight stands out as better- or worse-filled than the others; occupancy is uniformly low.  
+
+Next steps  
+• Verify that the booking data is complete—if additional records exist they may not have been loaded.  
+• Consider comparing bookings against aircraft seat capacity to get a clearer picture of load factors.
+
+--------------------------------------------------

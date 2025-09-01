@@ -77,6 +77,7 @@ we should not have to write specific logic for this dataset
 
 ### Improvements/Ideas
 
+- Could have asked to rename column one by ones
 - Can use Multivariate Imputation
 - Give 100 rows each time till all rows are dones
 
