@@ -10,6 +10,7 @@ def transform_data():
         InputFile(folder_name="data", file_name="Flight Bookings", file_ext="csv"),
     ]
 
+    df_list = []
     for index, input_file in enumerate(input_files):
         print(f"{index+1}/{len(input_files)} {input_file.file_path}")
 
@@ -19,4 +20,7 @@ def transform_data():
 
         data_model_service.create_model_and_store_data(input_file, df)
 
+        df_list.append(df)
+
+    data_model_service.create_and_store_database_schema(input_files, df_list)
     print("success")

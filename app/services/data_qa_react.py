@@ -12,23 +12,6 @@ class MainAgentDeps(BaseModel):
     database_schema: str
 
 
-main_agent = MainAgentDeps(
-    "openai:gpt-4o",
-    deps_type=MainAgentDeps,
-    output_type=str,
-    instructions=(
-        """
-        You are a agent that answers questions to a user based on a database schema.
-        You can create_plan for the user question.
-        Then for each plan_item 
-            you can create_sql and then execute_sql.
-            If there is any error in execute sql retry create_sql and execute_sql once.
-        Then use summarise_results to get an answer for the user
-        """
-    ),
-)
-
-
 ####
 
 
@@ -99,6 +82,59 @@ summary_agent = Agent(
         """
     ),
 )
+
+####
+
+
+main_agent = MainAgentDeps(
+    "openai:gpt-4o",
+    deps_type=MainAgentDeps,
+    output_type=str,
+    instructions=(
+        """
+        You are a agent that answers questions to a user based on a database schema.
+        You can create_plan for the user question.
+        Then for each plan_item 
+            you can create_sql and then execute_sql.
+            If there is any error in execute sql retry create_sql and execute_sql once.
+        Then use summarise_results to get an answer for the user
+        """
+    ),
+)
+
+
+@main_agent.tool
+def create_plan(ctx: RunContext[MainAgentDeps], question: str) -> Plan:
+    plan_result = plan_agent.run_sync(
+        question, deps=ctx.deps, message_history=message_history
+    )
+    return plan_result.output
+
+
+@main_agent.tool
+def create_sql_and_execute(ctx: RunContext[MainAgentDeps], plan_item: PlanItem) -> str:
+    sql_result = sql_agent.run_sync(
+        plan_item.description, deps=ctx.deps, message_history=message_history
+    )
+    return sql_result.output
+
+
+@main_agent.tool
+def summarise_plan_result(
+    ctx: RunContext[MainAgentDeps],
+    question: str,
+    plan: list[Plan],
+    plan_results: list[str],
+) -> str:
+    deps = SummaryAgentDeps(
+        database_schema=ctx.deps.database_schema,
+        question=question,
+        plan=plan,
+    )
+    summary_result = summary_agent.run_sync(
+        str(plan_results), deps=deps, message_history=message_history
+    )
+    return summary_result.output
 
 
 ####
