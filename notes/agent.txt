@@ -1,0 +1,39 @@
+autonomy
+planning and reasoning
+memory and context
+tool
+decision-making
+feedback and learning
+reflection
+goal-orientation
+
+
+when to use
+- graph
+- multi-agent setup
+- human in the loop
+- reinforcement learning
+
+re-act
+chain of thoughts
+tree/graph of thoughts
+monte carlo tree search
+
+
+plan and execute
+plan and refine
+debate
+toolformer
+
+
+memory
+- episodic
+- semantic
+- procedural
+- vector
+
+
+multi-agent
+- swarm
+- role-based
+- negotiation

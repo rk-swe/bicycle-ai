@@ -1,0 +1,60 @@
+given this 
+- database 
+- tables
+- columns
+- dtypes
+- enums
+- indexes
+
+answer question 
+from the user
+
+you can decide to query
+the database using sql
+then execute it to get answers
+
+___
+
+break problems into sub problems
+
+plan all the sql queries 
+
+execute them
+
+aggregate them
+
+validate them
+
+
+___
+
+select 
+
+which tables and columns do i need
+
+what sql queries to i need
+
+can you check each sql
+
+if this is the question
+this was reason for each sql
+and this was the result
+answer question based on info
+
+____
+
+problems:
+getting the schema of the table in text
+
+read only access
+
+
+select
+    from which table, columns
+where 
+order by
+groub by
+having
+
+sub query
+joins

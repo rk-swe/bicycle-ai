@@ -20,8 +20,8 @@ def get_answer(question: str) -> str:
     
     Question: {question}
     """
-    response= query_engine.query(contextual_question)
-    
+    response = query_engine.query(contextual_question)
+
     sql = response.metadata.get("sql_query")
     print(f"SQL: {sql}", end="\n\n")
 
