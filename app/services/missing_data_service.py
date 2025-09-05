@@ -103,7 +103,7 @@ def handle_one_column(
     method = response.output_parsed.method
     value = response.output_parsed.value
 
-    print(method, value)
+    print(f"{method}, {value}")
 
     # Apply imputation
     if method == "fill_mean":

@@ -147,17 +147,25 @@ def get_main_agent_instructions(ctx: RunContext[MainAgentDeps]) -> str:
 
 @main_agent.tool
 def create_plan(ctx: RunContext[MainAgentDeps], question: str) -> Plan:
+    print(f"main_agent, create_plan, {question}\n")
+
     plan_result = plan_agent.run_sync(
         question, deps=ctx.deps, message_history=message_history
     )
+
+    print(f"main_agent, create_plan, {plan_result.output}\n\n")
     return plan_result.output
 
 
 @main_agent.tool
 def create_sql_and_execute(ctx: RunContext[MainAgentDeps], plan_item: PlanItem) -> str:
+    print(f"main_agent, create_sql_and_execute, {plan_item}")
+
     sql_result = sql_agent.run_sync(
         plan_item.description, deps=ctx.deps, message_history=message_history
     )
+
+    print(f"main_agent, create_sql_and_execute, {sql_result.output}")
     return sql_result.output
 
 
@@ -168,6 +176,11 @@ def summarise_plan_result(
     plan: list[Plan],
     plan_results: list[str],
 ) -> str:
+    print(f"main_agent, summarise_plan_result")
+    print(f"question: {question}")
+    print(f"plan: {plan}")
+    print(f"plan_results: {plan_results}")
+
     deps = SummaryAgentDeps(
         database_schema=ctx.deps.database_schema,
         question=question,
@@ -176,6 +189,8 @@ def summarise_plan_result(
     summary_result = summary_agent.run_sync(
         str(plan_results), deps=deps, message_history=message_history
     )
+
+    print(f"main_agent, summary, {summary_result.output}")
     return summary_result.output
 
 
@@ -226,13 +241,22 @@ def get_answer_workflow(question: str) -> str:
 
 
 def get_answer_react(question: str) -> str:
-    return ""
+    database_schema = data_model_service.get_database_schema()
+
+    main_agent_deps = MainAgentDeps(database_schema=database_schema)
+
+    result = main_agent.run_sync(
+        question, deps=main_agent_deps, message_history=message_history
+    )
+    answer = result.output
+
+    return answer
 
 
 ####
 
 
-get_answer = get_answer_workflow
+get_answer = get_answer_react
 
 
 def test_qa():
@@ -249,16 +273,16 @@ def test_qa():
         # "Analyze seat occupancy to find the most and least popular flights.",
     ]
     for question in questions:
-        print(f"Question: {question}", end="\n\n")
-        print(f"Answer: {get_answer(question)}", end="\n\n")
-        print("-" * 50, end="\n\n")
+        print(f"Question: {question}\n\n")
+        print(f"Answer: {get_answer(question)}\n\n")
+        print(f"{'-' * 50}\n\n")
 
 
 def conversation_loop():
     while True:
         question = input("Question: ")
-        print(f"\nAnswer: {get_answer(question)}", end="\n\n")
-        print("-" * 50, end="\n\n")
+        print(f"\nAnswer: {get_answer(question)}\n\n")
+        print(f"{'-' * 50}\n\n")
 
 
 ####

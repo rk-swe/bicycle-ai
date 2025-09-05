@@ -78,7 +78,7 @@ table_schema_agent = Agent(
 
 
 def create_table_schema(input_file: InputFile, df: pd.DataFrame) -> TableSchema:
-    print("create_table_schema", input_file.sql_table_name)
+    print(f"create_table_schema, {input_file.sql_table_name}")
     deps = TableSchemaAgentDeps(
         table_name=input_file.sql_table_name,
         columns=df.columns.tolist(),

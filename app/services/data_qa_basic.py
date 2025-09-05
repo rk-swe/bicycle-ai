@@ -23,7 +23,7 @@ def get_answer(question: str) -> str:
     response = query_engine.query(contextual_question)
 
     sql = response.metadata.get("sql_query")
-    print(f"SQL: {sql}", end="\n\n")
+    print(f"SQL: {sql}\n\n")
 
     return response.response
 
@@ -42,13 +42,13 @@ def test_qa():
         "Analyze seat occupancy to find the most and least popular flights.",
     ]
     for question in questions:
-        print(f"Question: {question}", end="\n\n")
-        print(f"Answer: {get_answer(question)}", end="\n\n")
-        print("-" * 50, end="\n\n")
+        print(f"Question: {question}\n\n")
+        print(f"Answer: {get_answer(question)}\n\n")
+        print(f"{'-' * 50}\n\n")
 
 
 def conversation_loop():
     while True:
         question = input("Question: ")
-        print(f"\nAnswer: {get_answer(question)}", end="\n\n")
-        print("-" * 50, end="\n\n")
+        print(f"\nAnswer: {get_answer(question)}\n\n")
+        print(f"{'-' * 50}\n\n")
