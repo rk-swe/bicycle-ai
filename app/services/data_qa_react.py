@@ -4,12 +4,14 @@ from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
 
 from app import database
+from app.schemas.db_schemas import DatabaseSchema
+from app.services import data_model_service
 
 ####
 
 
 class MainAgentDeps(BaseModel):
-    database_schema: str
+    database_schema: DatabaseSchema
 
 
 ####
@@ -29,15 +31,23 @@ plan_agent = Agent(
     "openai:gpt-4o",
     deps_type=MainAgentDeps,
     output_type=Plan,
-    instructions=(
-        """
-        The user will ask questions about a database
-        You are an agent that thinks and creates a plan on how to answer it.
-        You need to give about the general description on how to solve question
-        and you break the question into sub questions.
-        """
-    ),
 )
+
+
+@plan_agent.instructions
+def get_plan_agent_instructions(ctx: RunContext[MainAgentDeps]) -> str:
+    instructions = f"""
+    The user will ask questions about a database
+    Use databas
+    You are an agent that thinks and creates a plan on how to answer it.
+    You need to give about the general description on how to solve question
+    and you break the question into sub questions.
+
+    database_schema:
+    {ctx.deps.database_schema.model_dump()}
+
+    """
+    return instructions
 
 
 ####
@@ -47,12 +57,19 @@ sql_agent = Agent(
     "openai:gpt-4o",
     deps_type=MainAgentDeps,
     output_type=str,
-    instructions=(
-        """
-        You are an agent that creates sql for the  input question based on the database schema
-        """
-    ),
 )
+
+
+@sql_agent.instructions
+def get_sql_agent_instructions(ctx: RunContext[MainAgentDeps]) -> str:
+    instructions = f"""
+    You are an agent that creates sql for the  input question based on the database schema
+
+    database_schema:
+    {ctx.deps.database_schema.model_dump()}
+
+    """
+    return instructions
 
 
 @sql_agent.tool
@@ -66,7 +83,7 @@ def execute_sql(ctx: RunContext[MainAgentDeps], sql_query: str) -> str:
 
 
 class SummaryAgentDeps(BaseModel):
-    database_schema: str
+    database_schema: DatabaseSchema
     question: str
     plan: Plan
 
@@ -75,13 +92,27 @@ summary_agent = Agent(
     "openai:gpt-4o",
     deps_type=SummaryAgentDeps,
     output_type=str,
-    instructions=(
-        """
-        You are an agent that takes the user question, and the plan and the plan results 
-        and answers the user in a correct way.
-        """
-    ),
 )
+
+
+@summary_agent.instructions
+def get_summary_agent_instructions(ctx: RunContext[SummaryAgentDeps]) -> str:
+    instructions = f"""
+        You are an agent that takes database_schema, user question, and the plan and the plan_results 
+        and answers the user in a correct way.
+
+    database_schema:
+    {ctx.deps.database_schema.model_dump()}
+
+    question:
+    {ctx.deps.question}
+
+    plan:
+    {ctx.deps.plan.model_dump()}
+
+    """
+    return instructions
+
 
 ####
 
@@ -90,17 +121,24 @@ main_agent = Agent(
     "openai:gpt-4o",
     deps_type=MainAgentDeps,
     output_type=str,
-    instructions=(
-        """
-        You are a agent that answers questions to a user based on a database schema.
-        You can create_plan for the user question.
-        Then for each plan_item 
-            you can create_sql and then execute_sql.
-            If there is any error in execute sql retry create_sql and execute_sql once.
-        Then use summarise_results to get an answer for the user
-        """
-    ),
 )
+
+
+@main_agent.instructions
+def get_main_agent_instructions(ctx: RunContext[MainAgentDeps]) -> str:
+    instructions = f"""
+    You are a agent that answers questions to for the user a user based on a database schema.
+    You can create_plan for the user question.
+    Then for each plan_item 
+        you can create_sql and then execute_sql.
+        If there is any error in execute sql retry create_sql and execute_sql once.
+    Then use summarise_results to get an answer
+
+    database_schema:
+    {ctx.deps.database_schema.model_dump()}
+
+    """
+    return instructions
 
 
 @main_agent.tool
@@ -144,7 +182,9 @@ message_history = []
 
 
 def get_answer_workflow(question: str) -> str:
-    main_agent_deps = MainAgentDeps(database_schema="")
+    main_agent_deps = MainAgentDeps(
+        database_schema=data_model_service.get_database_schema()
+    )
 
     plan_result = plan_agent.run_sync(
         question, deps=main_agent_deps, message_history=message_history
@@ -152,18 +192,19 @@ def get_answer_workflow(question: str) -> str:
     plan = plan_result.output
     # message_history.append(plan_result.new_messages())
 
-    sql_results = [
-        sql_agent.run_sync(
+    sql_results = []
+    for plan_item in plan.items:
+        sql_result = sql_agent.run_sync(
             plan_item.model_dump_json(),
             deps=main_agent_deps,
             message_history=message_history,
         )
-        for plan_item in plan.items
-    ]
-    # for x in sql_results:
-    #     message_history.append(x.new_messages())
+        sql_results.append(sql_result)
 
     plan_results = [x.output for x in sql_results]
+
+    # for x in sql_results:
+    #     message_history.append(x.new_messages())
 
     summary_result = summary_agent.run_sync(
         plan_result, message_history=message_history
@@ -184,14 +225,14 @@ def test_qa():
     questions = [
         # easy
         "Which airline has the most flights listed?",
-        "What are the top three most frequented destinations?",
-        "Number of bookings for American Airlines yesterday.",
-        # medium
-        "Average flight delay per airline.",
-        "Month with the highest number of bookings.",
-        # hard
-        "Patterns in booking cancellations, focusing on specific days or airlines with high cancellation rates.",
-        "Analyze seat occupancy to find the most and least popular flights.",
+        # "What are the top three most frequented destinations?",
+        # "Number of bookings for American Airlines yesterday.",
+        # # medium
+        # "Average flight delay per airline.",
+        # "Month with the highest number of bookings.",
+        # # hard
+        # "Patterns in booking cancellations, focusing on specific days or airlines with high cancellation rates.",
+        # "Analyze seat occupancy to find the most and least popular flights.",
     ]
     for question in questions:
         print(f"Question: {question}", end="\n\n")
