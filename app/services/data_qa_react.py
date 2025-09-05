@@ -254,7 +254,7 @@ def get_answer_react(question: str) -> str:
 ####
 
 
-get_answer = get_answer_react
+get_answer = get_answer_workflow
 # get_answer = get_answer_react
 
 
