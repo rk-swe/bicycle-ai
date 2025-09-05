@@ -86,7 +86,7 @@ summary_agent = Agent(
 ####
 
 
-main_agent = MainAgentDeps(
+main_agent = Agent(
     "openai:gpt-4o",
     deps_type=MainAgentDeps,
     output_type=str,

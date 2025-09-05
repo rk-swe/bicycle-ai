@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-from app.services import data_qa_basic, data_transform_service
+from app.services import data_qa_basic, data_qa_react, data_transform_service
 from tests import test_data_clean
 
 
@@ -12,9 +12,11 @@ def main():
 
     # data_qa_basic.test_qa()
 
-    data_qa_basic.conversation_loop()
+    # data_qa_basic.conversation_loop()
 
     # data_transform_service.test_handle_missing_data()
+
+    data_qa_react.conversation_loop()
 
     pass
 

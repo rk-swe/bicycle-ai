@@ -11,6 +11,7 @@ def transform_data():
     ]
 
     df_list = []
+    table_schema_list = []
     for index, input_file in enumerate(input_files):
         print(f"{index+1}/{len(input_files)} {input_file.file_path}")
 
@@ -18,9 +19,12 @@ def transform_data():
 
         df = data_clean_service.clean_data(input_file, df)
 
-        data_model_service.create_model_and_store_data(input_file, df)
+        df, table_schema = data_model_service.create_model_and_store_data(
+            input_file, df
+        )
 
         df_list.append(df)
+        table_schema_list.append(table_schema)
 
-    data_model_service.create_and_store_database_schema(input_files, df_list)
+    data_model_service.store_database_schema(table_schema_list)
     print("success")

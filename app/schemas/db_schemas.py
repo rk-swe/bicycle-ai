@@ -5,6 +5,7 @@ class ColumnSchema(BaseModel):
     name: str
     description: str
     possible_values: list[str] | None
+    data_type: str
 
 
 class TableSchema(BaseModel):
@@ -14,6 +15,6 @@ class TableSchema(BaseModel):
 
 
 class DatabaseSchema(BaseModel):
-    name: str
-    description: str
+    # name: str
+    # description: str
     tables: list[TableSchema]
