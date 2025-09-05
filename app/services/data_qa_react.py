@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import sqlalchemy as sa
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -198,7 +200,19 @@ def summarise_plan_results(
 message_history = []
 
 
+def get_contextual_question(question: str) -> str:
+    question = f"""
+    Current datetime is {datetime.now().isoformat()}.
+    Use this when interpreting relative time expressions like 'yesterday', 'this month', etc.
+    
+    Question: {question}
+    """
+    return question
+
+
 def get_answer_workflow(question: str) -> str:
+    question = get_contextual_question(question)
+
     database_schema = data_model_service.get_database_schema()
 
     main_agent_deps = MainAgentDeps(database_schema=database_schema)

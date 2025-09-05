@@ -1,0 +1,4 @@
+break down plans
+have extra fields to specify how to join
+so that we can join sql
+then we can execute the sql

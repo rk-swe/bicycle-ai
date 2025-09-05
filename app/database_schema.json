@@ -38,13 +38,13 @@
           "name": "departure_datetime",
           "description": "Date and time when the flight departs.",
           "possible_values": null,
-          "data_type": "TIMESTAMP"
+          "data_type": "VARCHAR"
         },
         {
           "name": "arrival_datetime",
           "description": "Date and time when the flight arrives.",
           "possible_values": null,
-          "data_type": "TIMESTAMP"
+          "data_type": "VARCHAR"
         },
         {
           "name": "departure_time",

@@ -16,12 +16,12 @@ def create_model_and_store_data(
 
     table_schema = create_table_schema(input_file, df)
 
-    try:
-        for column in table_schema.columns:
-            if column.data_type == "TIMESTAMP":
-                df[column] = pd.to_datetime(df[column])
-    except Exception:
-        pass
+    # try:
+    #     for column in table_schema.columns:
+    #         if column.data_type == "TIMESTAMP":
+    #             df[column] = pd.to_datetime(df[column])
+    # except Exception:
+    #     pass
 
     with database.engine.connect() as conn:
         df.to_sql(
@@ -58,8 +58,9 @@ table_schema_agent = Agent(
 
         1. USE ONLY the data in (`table_name`, `columns`, `column_dtypes`, `column_value_counts_head`, `column_unique_counts`, `rows`). Do NOT invent columns, tables, or values.
         2. Preserve column names exactly as they appear in `columns`.
-        3. data_type: the column's PostgreSQL SQL type (e.g., `INTEGER`, `BIGINT`, `DOUBLE PRECISION`, `VARCHAR`, `BOOLEAN`, `TIMESTAMP`) based on `column_dtypes` and `rows`.
+        3. data_type: the column's PostgreSQL SQL type (e.g., `INTEGER`, `BIGINT`, `DOUBLE PRECISION`, `VARCHAR`, `BOOLEAN`) based on `column_dtypes` and `rows`.
             - If the column_dtype is string/object and values are string keep the data type as `VARCHAR`.
+            - if the column has datetime values keep it as `VARCHAR` only.
         4. For each column, produce:
         - name: the exact column name.
         - description: 1-2 sentences about the column. If you cannot describe it confidently, write "No clear description from provided data."
