@@ -42,7 +42,9 @@ def get_plan_agent_instructions(ctx: RunContext[MainAgentDeps]) -> str:
     The user will ask questions about a database
     You are an agent that thinks and creates a plan on how to answer it.
     You need to give about the general description on how to solve question
-    and you break the question into sub questions.
+
+    If the problem is simple you can give only one plan item
+    each plan item should be easy to write a sql for and get answer
 
     database_schema:
     {ctx.deps.database_schema.model_dump()}
@@ -66,6 +68,8 @@ def get_sql_agent_instructions(ctx: RunContext[MainAgentDeps]) -> str:
     instructions = f"""
     You are an agent that creates sql for the  input question based on the database schema
     You then execute the sql against the database and get results.
+    You can use only select statements.
+    Dont get more than 20 rows in result.
 
     database_schema:
     {ctx.deps.database_schema.model_dump()}
