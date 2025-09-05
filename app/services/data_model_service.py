@@ -112,7 +112,7 @@ def store_database_schema(table_schemas: list[TableSchema]) -> None:
     database_schema = DatabaseSchema(
         # name="",
         # description="",
-        tables=[table_schemas],
+        tables=table_schemas,
     )
     with open("app/database_schema.json", "w") as fp:
         json.dump(database_schema.model_dump(), fp)
