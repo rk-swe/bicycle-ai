@@ -64,6 +64,7 @@ sql_agent = Agent(
 def get_sql_agent_instructions(ctx: RunContext[MainAgentDeps]) -> str:
     instructions = f"""
     You are an agent that creates sql for the  input question based on the database schema
+    You then execute the sql against the database and get results.
 
     database_schema:
     {ctx.deps.database_schema.model_dump()}
@@ -76,7 +77,10 @@ def get_sql_agent_instructions(ctx: RunContext[MainAgentDeps]) -> str:
 def execute_sql(ctx: RunContext[MainAgentDeps], sql_query: str) -> str:
     with database.engine.connect() as conn:
         db_records = conn.execute(sa.text(sql_query)).all()
+        db_records = [db_record._asdict() for db_record in db_records]
         db_records = jsonable_encoder(db_records)
+
+    return db_records
 
 
 ####
@@ -182,14 +186,15 @@ message_history = []
 
 
 def get_answer_workflow(question: str) -> str:
-    main_agent_deps = MainAgentDeps(
-        database_schema=data_model_service.get_database_schema()
-    )
+    database_schema = data_model_service.get_database_schema()
+
+    main_agent_deps = MainAgentDeps(database_schema=database_schema)
 
     plan_result = plan_agent.run_sync(
         question, deps=main_agent_deps, message_history=message_history
     )
     plan = plan_result.output
+    print(plan)
     # message_history.append(plan_result.new_messages())
 
     sql_results = []
@@ -202,13 +207,22 @@ def get_answer_workflow(question: str) -> str:
         sql_results.append(sql_result)
 
     plan_results = [x.output for x in sql_results]
+    print(plan_results)
 
     # for x in sql_results:
     #     message_history.append(x.new_messages())
 
-    summary_result = summary_agent.run_sync(
-        plan_result, message_history=message_history
+    summary_agent_deps = SummaryAgentDeps(
+        database_schema=database_schema,
+        question=question,
+        plan=plan,
     )
+    summary_result = summary_agent.run_sync(
+        plan_results, deps=summary_agent_deps, message_history=message_history
+    )
+    answer = summary_result.output
+    print(answer)
+    return answer
 
 
 def get_answer_react(question: str) -> str:
