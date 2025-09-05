@@ -2,7 +2,7 @@
   "tables": [
     {
       "name": "airline_id_to_name",
-      "description": "A table mapping airline IDs to their respective airline names.",
+      "description": "Table mapping airline IDs to their corresponding airline names.",
       "columns": [
         {
           "name": "airline_id",
@@ -12,7 +12,7 @@
         },
         {
           "name": "airline_name",
-          "description": "The name of the airline corresponding to the given airline ID.",
+          "description": "The name of the airline corresponding to the given ID.",
           "possible_values": null,
           "data_type": "VARCHAR"
         }
@@ -20,125 +20,125 @@
     },
     {
       "name": "flight_bookings",
-      "description": "A table containing detailed records of flight bookings including travel details, passenger information, flight status, and amenities.",
+      "description": "This table contains information about flight bookings, including details about flights, passengers, and additional services.",
       "columns": [
         {
           "name": "airline_id",
-          "description": "Identifier for different airlines.",
+          "description": "Unique identifier for the airline.",
           "possible_values": null,
           "data_type": "INTEGER"
         },
         {
           "name": "flight_number",
-          "description": "Unique identification number for each flight.",
+          "description": "Unique identifier for the flight.",
           "possible_values": null,
           "data_type": "INTEGER"
         },
         {
-          "name": "departure_date",
-          "description": "Date and time when the flight is scheduled to depart.",
+          "name": "departure_datetime",
+          "description": "Date and time when the flight departs.",
           "possible_values": null,
           "data_type": "TIMESTAMP"
         },
         {
-          "name": "arrival_date",
-          "description": "Date and time when the flight is scheduled to arrive.",
+          "name": "arrival_datetime",
+          "description": "Date and time when the flight arrives.",
           "possible_values": null,
           "data_type": "TIMESTAMP"
         },
         {
           "name": "departure_time",
-          "description": "The scheduled time for the flight's departure.",
+          "description": "Time when the flight departs.",
           "possible_values": null,
           "data_type": "VARCHAR"
         },
         {
           "name": "arrival_time",
-          "description": "The scheduled time for the flight's arrival.",
+          "description": "Time when the flight arrives.",
           "possible_values": null,
           "data_type": "VARCHAR"
         },
         {
           "name": "booking_code",
-          "description": "Unique code representing a particular booking.",
+          "description": "Unique code for the booking.",
           "possible_values": null,
           "data_type": "VARCHAR"
         },
         {
           "name": "passenger_name",
-          "description": "Name of the passenger traveling on the flight.",
+          "description": "Name of the passenger.",
           "possible_values": null,
           "data_type": "VARCHAR"
         },
         {
           "name": "seat_number",
-          "description": "Assigned seat number for the passenger on the flight.",
+          "description": "The assigned seat number for the passenger.",
           "possible_values": null,
           "data_type": "VARCHAR"
         },
         {
-          "name": "cabin_class",
-          "description": "Class in which the passenger is traveling, such as Economy, Business, or First.",
+          "name": "travel_class",
+          "description": "Class of service for the flight (e.g., Economy, Business, First).",
           "possible_values": ["Economy", "Business", "First"],
           "data_type": "VARCHAR"
         },
         {
           "name": "fare",
-          "description": "The price paid for the flight ticket.",
+          "description": "Cost of the ticket in a monetary value.",
           "possible_values": null,
           "data_type": "DOUBLE PRECISION"
         },
         {
           "name": "extras",
-          "description": "Additional services or items purchased in connection with the flight.",
+          "description": "Additional services booked by the passenger (e.g., Extra Baggage, Meal, No Extras).",
           "possible_values": ["Extra Baggage", "No Extras", "Meal"],
           "data_type": "VARCHAR"
         },
         {
           "name": "loyalty_points",
-          "description": "Points earned from the airline loyalty program for the flight.",
+          "description": "Points earned by the passenger through loyalty programs.",
           "possible_values": null,
           "data_type": "INTEGER"
         },
         {
           "name": "status",
-          "description": "The current status of the flight booking, such as Confirmed, Cancelled, or Pending.",
+          "description": "Status of the booking (e.g., Confirmed, Cancelled, Pending).",
           "possible_values": ["Confirmed", "Cancelled", "Pending"],
           "data_type": "VARCHAR"
         },
         {
           "name": "gate",
-          "description": "Gate at which the flight is scheduled to board.",
+          "description": "The gate number from which the flight departs.",
           "possible_values": null,
           "data_type": "VARCHAR"
         },
         {
           "name": "terminal",
-          "description": "Terminal from which the flight is scheduled to depart.",
+          "description": "The terminal of departure.",
           "possible_values": ["A", "B", "C", "D"],
           "data_type": "VARCHAR"
         },
         {
           "name": "baggage_claim",
-          "description": "Location where passengers can retrieve their checked baggage after the flight.",
+          "description": "The baggage claim area for the flight.",
           "possible_values": null,
           "data_type": "VARCHAR"
         },
         {
           "name": "duration_hours",
-          "description": "The flight's total duration in hours.",
+          "description": "Duration of the flight in hours.",
           "possible_values": null,
           "data_type": "DOUBLE PRECISION"
         },
         {
           "name": "layover_count",
           "description": "Number of layovers during the flight.",
-          "possible_values": null,
+          "possible_values": ["0", "1", "2"],
           "data_type": "INTEGER"
         },
         {
           "name": "layover_locations",
-          "description": "Locations where the flight has layovers.",
+          "description": "Locations of layovers for the flight.",
           "possible_values": null,
           "data_type": "VARCHAR"
         },
@@ -150,25 +150,25 @@
         },
         {
           "name": "pilot",
-          "description": "Name of the pilot flying the aircraft.",
+          "description": "Name or identifier of the pilot.",
           "possible_values": null,
           "data_type": "VARCHAR"
         },
         {
           "name": "cabin_crew",
-          "description": "Names of the cabin crew members on the flight.",
+          "description": "Name or identifier of the cabin crew team.",
           "possible_values": null,
           "data_type": "VARCHAR"
         },
         {
           "name": "inflight_entertainment",
-          "description": "Indicates whether in-flight entertainment is available or not.",
+          "description": "Indicates if inflight entertainment is available (Yes or No).",
           "possible_values": null,
           "data_type": "BOOLEAN"
         },
         {
           "name": "meal_option",
-          "description": "Meal preference selected by the passenger for the flight.",
+          "description": "Meal option selected by the passenger (e.g., Vegan, Vegetarian, Non-Vegetarian, No Meal).",
           "possible_values": [
             "Vegan",
             "Vegetarian",
@@ -178,38 +178,38 @@
           "data_type": "VARCHAR"
         },
         {
-          "name": "wifi",
-          "description": "Availability of WiFi on the flight.",
+          "name": "wifi_available",
+          "description": "Indicates if WiFi is available during the flight (Available or Not Available).",
           "possible_values": null,
           "data_type": "BOOLEAN"
         },
         {
           "name": "window_seat",
-          "description": "Indicates if the passenger's seat is by the window.",
+          "description": "Indicates if the seat is at the window.",
           "possible_values": null,
           "data_type": "BOOLEAN"
         },
         {
           "name": "aisle_seat",
-          "description": "Indicates if the passenger's seat is by the aisle.",
+          "description": "Indicates if the seat is at the aisle.",
           "possible_values": null,
           "data_type": "BOOLEAN"
         },
         {
           "name": "emergency_exit_row",
-          "description": "Indicates if the passenger's seat is in an emergency exit row.",
+          "description": "Indicates if the seat is in an emergency exit row.",
           "possible_values": null,
           "data_type": "BOOLEAN"
         },
         {
           "name": "number_of_stops",
-          "description": "Number of stops the flight makes before reaching the destination.",
+          "description": "Total number of stops during the flight.",
           "possible_values": null,
           "data_type": "INTEGER"
         },
         {
-          "name": "loyalty_program_member",
-          "description": "Indicates whether the passenger is a member of the airline's loyalty program.",
+          "name": "reward_program_member",
+          "description": "Indicates if the passenger is a member of a reward program (Yes or No).",
           "possible_values": null,
           "data_type": "BOOLEAN"
         }
