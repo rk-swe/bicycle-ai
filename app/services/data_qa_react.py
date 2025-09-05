@@ -38,7 +38,6 @@ plan_agent = Agent(
 def get_plan_agent_instructions(ctx: RunContext[MainAgentDeps]) -> str:
     instructions = f"""
     The user will ask questions about a database
-    Use databas
     You are an agent that thinks and creates a plan on how to answer it.
     You need to give about the general description on how to solve question
     and you break the question into sub questions.
@@ -134,9 +133,8 @@ def get_main_agent_instructions(ctx: RunContext[MainAgentDeps]) -> str:
     You are a agent that answers questions to for the user a user based on a database schema.
     You can create_plan for the user question.
     Then for each plan_item 
-        you can create_sql and then execute_sql.
-        If there is any error in execute sql retry create_sql and execute_sql once.
-    Then use summarise_results to get an answer
+        you can use create_sql_and_execute.
+    Then use summarise_plan_results to get an answer
 
     database_schema:
     {ctx.deps.database_schema.model_dump()}
@@ -170,13 +168,13 @@ def create_sql_and_execute(ctx: RunContext[MainAgentDeps], plan_item: PlanItem) 
 
 
 @main_agent.tool
-def summarise_plan_result(
+def summarise_plan_results(
     ctx: RunContext[MainAgentDeps],
     question: str,
     plan: list[Plan],
     plan_results: list[str],
 ) -> str:
-    print(f"main_agent, summarise_plan_result")
+    print(f"main_agent, summarise_plan_results")
     print(f"question: {question}")
     print(f"plan: {plan}")
     print(f"plan_results: {plan_results}")
@@ -190,7 +188,7 @@ def summarise_plan_result(
         str(plan_results), deps=deps, message_history=message_history
     )
 
-    print(f"main_agent, summary, {summary_result.output}")
+    print(f"main_agent, summarise_plan_results, {summary_result.output}")
     return summary_result.output
 
 
@@ -257,20 +255,21 @@ def get_answer_react(question: str) -> str:
 
 
 get_answer = get_answer_react
+# get_answer = get_answer_react
 
 
 def test_qa():
     questions = [
         # easy
         "Which airline has the most flights listed?",
-        # "What are the top three most frequented destinations?",
-        # "Number of bookings for American Airlines yesterday.",
-        # # medium
-        # "Average flight delay per airline.",
-        # "Month with the highest number of bookings.",
-        # # hard
-        # "Patterns in booking cancellations, focusing on specific days or airlines with high cancellation rates.",
-        # "Analyze seat occupancy to find the most and least popular flights.",
+        "What are the top three most frequented destinations?",
+        "Number of bookings for American Airlines yesterday.",
+        # medium
+        "Average flight delay per airline.",
+        "Month with the highest number of bookings.",
+        # hard
+        "Patterns in booking cancellations, focusing on specific days or airlines with high cancellation rates.",
+        "Analyze seat occupancy to find the most and least popular flights.",
     ]
     for question in questions:
         print(f"Question: {question}\n\n")
